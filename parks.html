@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+    <script src="https://d3js.org/topojson.v1.min.js"></script>
+    <script src="http://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+  <meta charset="utf-8">
+  <script src="data/JSONs/OS_Full_1.json"></script>
+
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <style> text {font-family: "Open Sans", sans-serif; font-size: 12px;}</style>
+
+      <style>
+      .hover {
+        stroke-width: 2px;
+        opacity: 0.5;
+      }
+      .incident{
+        fill: steelblue;
+      }
+      .info {
+        padding: 6px 8px;
+        font: 14px/16px Arial, Helvetica, sans-serif;
+        background: white;
+        background: rgba(255,255,255,0.8);
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        border-radius: 5px;
+    }
+    .info h4 {
+        margin: 0 0 5px;
+        color: #777;
+    }
+      </style>
+    <title>parks</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom fonts for this template -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="css/clean-blog.min.css" rel="stylesheet">
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="index.html">Boston Public Space</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="parks.html">Parks</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="downtown.html">Downtown Parks</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="backbay.html">Back Bay Fens</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="southwest.html">Southwest Corridor</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="castle.html">Castle Island</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('img/bostoncommonducks.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>Boston Parks</h1>
+              <h2 class="subheading">Most frequently used</h2>
+                        </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+            <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+
+
+            <div class = "mapchart" id="chart"></div>
+            <div class = "mapchart" id="map" style="width: 780px; height: 580px"></div>
+            <script>
+                    // Bar Chart code will go here.
+                    var pingData = [];
+
+                    d3.csv("data/all_parks_counts_top15.csv", function(d) {
+                      var name = d.SITE_NAME.split("& ").join("")
+                      var name = name.split(" ").join("_")
+
+                      return {
+                        site : name,
+                        pings : +d.PING_CT
+                      };
+                      console.log(site);
+                    }, function(error, rows) {
+                      pingData = rows;
+
+                      createVisualization();
+                    });
+
+                    function createVisualization(){
+                      // Width and height of SVG
+                      var w = 600;
+                      var h = 455;
+
+                      // Get length of Array and set length so we can an input dataset of variable length
+                      var arrayLength = pingData.length; // length of dataset
+                      var maxValue = d3.max(pingData, function(d) { return +d.pings;} ); // get maximum value of our dataset
+                      var x_axisLength = 400; // length of x-axis in our layout
+                      var y_axisLength = 400; // length of y-axis in our layout
+
+                      // Use a scale for the height of the visualization
+                      var yScale = d3.scale.linear()
+                          .domain([0, maxValue])
+                          .range([0, y_axisLength]);
+
+                      //Create SVG element
+                      var svg = d3.select("#chart")
+                        .append("svg")
+                        .attr("width", w)
+                        .attr("height", h);
+
+
+                      // Select and generate rectangle elements
+                      svg.selectAll( "rect" )
+                        .data( pingData )
+                        .enter()
+                        .append("rect")
+                        .attr( "x", function(d,i){
+                          return i * (x_axisLength/arrayLength) + 30; // Set x coordinate of rectangle to index of data value (i) *25
+                        })
+                        .attr( "y", function(d){
+                          return h - yScale(d.pings) - 35; // Set y coordinate of rect using the y scale
+                        })
+                        .attr( "width", (x_axisLength/arrayLength) - 1)
+                        .attr( "height", function(d){
+                          return yScale(d.pings); // Set height of using the scale
+                        })
+                        .attr( "fill", "gray")
+                        .attr("class", function (d) { return d.site ;})
+                        .on("mouseover", function(d) {
+                        d3.selectAll("." + d.site).classed("hover",true);
+                        console.log(d.site);
+                        return tooltip.style("visibility", "visible").text(d.site + ": " + d.pings + " Pings");
+                        })
+                      //  .on("mousemove", function(d){
+                      //     return tooltip.styles("top", (event.pageY- 30)+"px").style("left",(event.pageX+5)+"px").text(d.site + ": " + d.pings+ " Pings");})
+                        .on("mouseout", function(d) {
+                      //  d3.select(this).classed("hover",false);
+                         d3.selectAll("." + d.site).classed("hover", false);
+                         return tooltip.style("visibility", "hidden");
+                        });
+
+                    // Create y-axis
+                      svg.append("line")
+                        .attr("x1", 30)
+                        .attr("y1", 0)
+                        .attr("x2", 30)
+                        .attr("y2", 420)
+                        .attr("stroke-width", 2)
+                        .attr("stroke", "black");
+
+                      // Create x-axis
+                      svg.append("line")
+                        .attr("x1", 30)
+                        .attr("y1", 420)
+                        .attr("x2", 440)
+                        .attr("y2", 420)
+                        .attr("stroke-width", 2)
+                        .attr("stroke", "black");
+
+                      // y-axis label
+                      svg.append("text")
+                        .attr("class", "y label")
+                        .attr("text-anchor", "end")
+                        .text("No. of Pings")
+                        .attr("transform", "translate(20, 20) rotate(-90)")
+                        .attr("font-size", "14px")
+                        .attr("font-family", "'Open Sans', sans-serif");
+
+                      // Create Tooltip and set it to be hidden
+                      var tooltip = d3.select("#chart")
+                        .append("div")
+                        //.style("position", "absolute")
+                        .style("font-family", "'Open Sans', sans-serif")
+                        .style("font-size", "14px")
+                        .style("z-index", "10")
+                        .style("visibility", "hidden");
+              }
+              </script>
+
+
+            <script>
+            var map = L.map('map',{ center: [42.3350, -71.060], zoom: 13});
+
+            var CartoDB_Positron = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
+            	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+            	subdomains: 'abcd',
+            	maxZoom: 19
+            }).addTo(map);
+
+            function style(feature) {
+              return {
+                  fillColor: '#FD8D3C',
+                  weight: 0.1,
+                  opacity: 1,
+                  color: 'white',
+                  dashArray: '3',
+                  fillOpacity: 0.7
+              };
+          }
+               L.geoJson(neighborhoods_json, {style: style}).addTo(map);
+
+            function highlightFeature(e) {
+                var layer = e.target;
+
+                layer.setStyle({
+                    weight: 5,
+                    color: '#666',
+                    dashArray: '',
+                    fillOpacity: 0.7
+                });
+
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                    layer.bringToFront();
+                }
+
+                info.update(layer.feature.properties);
+
+                link_over(layer,layer.feature.properties) ;
+
+              }
+
+            function resetHighlight(e) {
+              geojson.resetStyle(e.target);
+              info.update();
+              link_out(e.target,e.target.feature.properties);
+          }
+            var geojson;
+
+            function zoomToFeature(e) {
+                map.fitBounds(e.target.getBounds());
+            }
+
+            function link_over(targ,prop){
+
+                   //This part adds the class "hover" to the state and its matching rectangle in the chart
+                targ.on("mouseover", function(d) {
+                    d3.selectAll("." + prop.Name1).classed("hover",true);})
+
+                  console.log(prop.Name1);
+            }
+
+            function link_out(targ,prop){
+
+                targ.on("mouseout", function(d) {
+                d3.selectAll("." + prop.Name1).classed("hover", false);
+                  });
+            }
+          function onEachFeature(feature, layer) {
+              layer.on({
+                  mouseover: highlightFeature,
+                  mouseout: resetHighlight,
+                  click: zoomToFeature
+              });
+          }
+
+          geojson = L.geoJson(neighborhoods_json, {
+              style: style,
+              onEachFeature: onEachFeature
+          }).addTo(map);
+
+          var info = L.control();
+
+          info.onAdd = function (map) {
+              this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+              this.update();
+              return this._div;
+          };
+
+          // method that we will use to update the control based on feature properties passed
+          info.update = function (properties) {
+              this._div.innerHTML = '<h4> The Open Spaces We Choose </h4>' +  (properties ?
+                  '<b>'  + properties.Name + '</b><br />' + 'Description: ' + properties.Des
+                  : 'Hover over a park');
+          };
+
+          info.addTo(map);
+          </script>
+        </div>
+      </div>
+    </div>
+</article>
+
+<article>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+
+            <h2>Top 15 Parks by Pings:</h2>
+            <ul>
+              <li>1.	Boston Common & Public Garden (Main Tourist Site)</li>
+              <li>2.	RFK Greenway (Urban Linear Park Near Water)</li>
+              <li>3.	Commonwealth Ave (Linear Park, Not Along Public Transit Corridor) </li>
+              <li>4.	Charles River Reservation (Largely Freeway)</li>
+              <li>5.	Strandaway & Castle Island (Ocean Front & Historic) </li>
+              <li>6.	Long Wharf & Aquarium (Public Transit, Ocean Front & Boston Institution) </li>
+              <li>7.	Fenway Park (Privately Owned)</li>
+              <li>8.	Back Bay Fens (Historic Park) </li>
+              <li> 9.	Southwest Corridor Park (Transit Aligned Park)</li>
+              <li>10.	Charlesgate </li>
+              <li>11.	Quincy Market Square</li>
+              <li>12.	Arborway</li>
+              <li>13.	Commonwealth Ave Mall </li>
+              <li>14.	Bremen Street Park </li>
+              <li>15.	Franklin Park </li>
+            </ul>
+
+            <h2>Focusing on 7 Parks</h2>
+              <p class="lead">In a city housing hundreds of parks throughout Boston’s many neighborhoods, choosing six to analyze for climate change impacts was exceedingly difficult. Data on Boston parks is collected and maintained by the City of Boston in its Open Space dataset (https://data.boston.gov/dataset/open-space). This dataset contains 1006 distinct spaces identified as Open Space by the City of Boston.
+                </p>
+              <p class="lead">Some parks in Boston are represented in this dataset by more than one record – especially if the single open space unit is separated or bisected by roadways.  As such, the data entries in the spreadsheet with the following Open Space IDs were combined in GIS to get the final JSON shapes for the public spaces identified in BOLD above. All other parks above are identified by a single Open Space ID in the Open Space dataset or were not included in our final analysis. These six distinct parks cover the breadth of central Boston.s
+                </p>
+                <p class="lead">Combined Open Space IDs: </p>
+                  <ul>
+                    <li>Boston Common/Public Garden: 38, 39, 40</li>
+                    <li>RFK Greenway: 551, 552, 554, 555, 557, 558, 559, 570, 571</li>
+                    <li>Castle Island: 387, 388</li>
+                    <li>Long Wharf and Aquarium: 798, 799, 899, 900</li>
+                      </ul>
+                  <p class="lead">When determining which six parks to examine the heat island and sea rise/flooding impacts, we followed two rules: 1) Parks must be publicly owned and accessible; and, 2) There must be some variation in park size (small to large), shape (linear to square) and type (waterfront, biking/walking, gathering space, transit corridor).
+                    </p>
+                  <p class="lead">As the crown jewel and most prominent of public parks in Boston due to its central position on the Freedom Trail, the Boston Common & Public Garden is technically two separate parks. The Boston Common is the oldest public park in the United States, founded in 1634, and is 50 acres in size. The Boston Public Garden, founded in 1837, is separated from the Common by Charles Street and is 24 acres in size.
+                    </p>
+                  <p class="lead">The RFK Greenway is a relatively new park as it was developed following the relocation of the highway under the Boston during the Big Dig. It was completed in 2008 and the Rose Fitzgerald Kennedy Greenway Conservancy maintains its 17 acres. Its shape follows the contours of the underground highway from North End to Chinatown and South Station.
+                    </p>
+                  <p class="lead">As we are interested in the impacts of climate change on public spaces and public transit, we decided to focus on the Southwest Corridor Park which aligns with a major public transit system: the Orange Line MBTA track from Back Bay to Forest Hills. The Park itself is 4.1 miles long and covers 52 acres. Therefore, we excluded both Commonwealth Avenue and the Charles River Reservation even though both are linear parkways alongside major roads.
+                    </p>
+                  <p class="lead">As an extremely visible landmark as visitors fly into Logan International Airport, Castle Island  & the Strandaway. Castle Island is home to the 19th Century Fort Independence and covers 22 acres on the edge of Boston Harbor.
+                    </p>
+                  <p class="lead">Alongside the RFK Greenway in Boston is the Boston Aquarium and Long Wharf, which consists of two historic wharfs and a public access harborwalk.
+                    </p>
+                  <p class="lead">Although a prominent landmark, Fenway Park Field is privately owned and not publicly accessible. As such it was not included in this analysis.
+                    </p>
+                    <p class="lead">Charlesgate, designed by Olmsted in the late 1800s is a connection of Emerald Necklace and Charles River.
+                      </p>
+                      <p class="lead">The last park included is the Back Bay Fens, designed by Olmsted in the late 1800s. It is a main feature of Boston’s Emerald Necklace system that covers over 1000 acres.
+                        </p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <p class="copyright text-muted">Copyright &copy; Boston Public Space 2018</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>

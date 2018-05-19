@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+    <script src="https://d3js.org/topojson.v1.min.js"></script>
+    <script src="http://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+  <meta charset="utf-8">
+  <script src="data/JSONs/OS_Full_1.json"></script>
+
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <style> text {font-family: "Open Sans", sans-serif; font-size: 12px;}</style>
+
+      <style>
+      .hover {
+        stroke-width: 2px;
+        opacity: 0.5;
+      }
+      .incident{
+        fill: steelblue;
+      }
+      .info {
+        padding: 6px 8px;
+        font: 14px/16px Arial, Helvetica, sans-serif;
+        background: white;
+        background: rgba(255,255,255,0.8);
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        border-radius: 5px;
+    }
+    .info h4 {
+        margin: 0 0 5px;
+        color: #777;
+    }
+      </style>
+    <title>parks</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom fonts for this template -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="css/clean-blog.min.css" rel="stylesheet">
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="index.html">Boston Public Space</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="parks.html">Parks</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="downtown.html">Downtown Parks</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="backbay.html">Back Bay Fens</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="southwest.html">Southwest Corridor</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="castle.html">Castle Island</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('img/bc1.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>Back Bay Fens & Charlesgate Park</h1>
+              <h2 class="subheading"></h2>
+                        </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+
+<article>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+
+                  <p class="lead">
+                    Back Bay Fens was designed by Olmsted in the late 1800s. It is a main feature of Boston’s Emerald Necklace system that covers over 1000 acres. Prior to the development of Highway 90, Charlesgate, also designed by Olmsted in the late 1800s, connected the Emerald Necklace and the Charles River. Along the south side of Back Bay Fens and along the Charles River further to the north, the 2012 Median Household income was $10,446-$30,000 and the area just north of the park has a median income slightly higher from $30,000 - $53,1336 (the overall median income of the City of Boston)  <a href="http://www.bostonplans.org/getattachment/36c03693-2a54-4fec-8b64-b130c8a509e3/">(source: Boston Planning & development agency)</a>. The Fenway and Kenmore neighborhoods surrounding the Back Bay Fens are quite dense, with many census blocks having over 500 people per acre  <a href="http://www.bostonplans.org/getattachment/6d0e3066-e00f-4cee-8ec3-1fe7b561ffec/ ">(source: Boston Planning & development agency)</a>.
+                    </p>
+                  <p class="lead">
+                  The inner regions of both Back Bay Fens and Charlesgate Park are relatively cool compared to the areas along the outer edges of the park. As can be seen, the neighborhood directly east of the Fens is almost 9° Celsius warmer than the core of the park. To the west and south, this extreme heat is slightly mollified and is between 5-7° Celsius warmer than the coolest temperature in the park, which is 25° Celsius.
+                    </p>
+                  <p class="lead">
+                    </p>
+                  <h2>Excess heat analysis</h2>
+                  <h2>Flood analysis</h2>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <p class="copyright text-muted">Copyright &copy; Boston Public Space 2018</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>
