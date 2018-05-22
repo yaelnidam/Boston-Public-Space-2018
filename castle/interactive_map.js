@@ -1,7 +1,8 @@
 ///////////////////////////// This is the barchart with ttl distances ///////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-    function draw_distances(data) {
 
+    function draw_distances(data) {
+/*
       var margin = {top: 20, right: 20, bottom: 20, left: 40},
           width = 600 - margin.left - margin.right,
           height = 100 - margin.top - margin.bottom;
@@ -24,7 +25,7 @@
       var yAxis = d3.axisLeft()
                     .scale(y)
                     .ticks(5);
-
+/*
       var svg = d3.select("#bar")
                   .append("g")
                   .attr("transform", "translate(" + margin.left + "," + margin.top*2 + ")");
@@ -67,21 +68,26 @@
             .attr("y", function(d) { return y(d.ttl_dist)+yTextPadding; })
             .text(function(d){ return d.ttl_dist+" miles"; });
 
+
         //Setting onMouseOver event handler for bars
         svg.selectAll(".bar").on("mouseover", function(d){
           $(".active").removeClass("active");
-          $(this).addClass("active");
+           $(this).addClass("active");
+           console.log(d);
           draw_graphs(d);
           draw_map_route(d);
         });
+*/
+
     }
+
 
     ////////////////////////////////// This is the elevation linegraph ///////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     function draw_graphs(day_data) {
-      var margin = {top: 20, right: 20, bottom: 30, left: 50},
+      var margin = {top: 20, right: 20, bottom:20, left: 50},
           width = 600 - margin.left - margin.right,
-          height = 150 - margin.top - margin.bottom;
+          height = 200- margin.top - margin.bottom;
 
       // Define format of the text value on top of the moving circle
       var formatValue = d3.format(",.1f");
@@ -93,7 +99,7 @@
       var bisect = d3.bisector(function(d){ return d.distance; }).left; // NEW STAFF
 
       // variable to hold our yscales
-      var yarray = ['temperature','flooding','elevation'];
+      var yarray = ['temperature','stormwater','elevation'];
 
       // Intitialize new nested dataset
       var new_data_nest = [];
@@ -126,9 +132,9 @@
               //console.log(new_data_nest[ix].values[i])
           }
         }
-        else if (new_data_nest[ix].key=='flooding'){
+        else if (new_data_nest[ix].key=='stormwater'){
           for ( var i=0; i<new_data_nest[0].values.length; i++) {
-              new_data_nest[ix].values[i]['si'] = ' '
+              new_data_nest[ix].values[i]['si'] = 'ft'
 
           }
         }
@@ -389,20 +395,30 @@
       } // End mousemove
 
 
+      draw_map_route(day_data);
+
       } // End draw elevation
       function draw_base_map() {
         // The center must be updated whenever I put a new coordinate on the map
-        var center =[	42.3332644	,	-71.05		]	 //[53.01,25.73]->Eastern Europe,  [37.77, -122.45]->California
+        var center = [	42.3384353	,	-71.03	]	//[53.01,25.73]->Eastern Europe,  [37.77, -122.45]->California
 
         // The token is for access to the mapbox API
         var accessToken = 'pk.eyJ1Ijoib2lrb25hbmciLCJhIjoiY2ozM2RjcjIyMDBjODJ3bzh3bnRyOHBxMyJ9.nQH16WG-DcBB_TQEEJiuCA';
 
         // Default guidelines from Leaflet
-        var mapboxTiles = L.tileLayer('https://api.mapbox.com/styles/v1/oikonang/cj33g56m9000k2roa18n92cr8/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoib2lrb25hbmciLCJhIjoiY2ozM2RjcjIyMDBjODJ3bzh3bnRyOHBxMyJ9.nQH16WG-DcBB_TQEEJiuCA', {
+      /*  var mapboxTiles = L.tileLayer('https://api.mapbox.com/styles/v1/oikonang/cj33g56m9000k2roa18n92cr8/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoib2lrb25hbmciLCJhIjoiY2ozM2RjcjIyMDBjODJ3bzh3bnRyOHBxMyJ9.nQH16WG-DcBB_TQEEJiuCA', {
             attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>',
             maxZoom: 18,
             accessToken: accessToken
         });
+        */
+
+      var mapboxTiles =  L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
+   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+   subdomains: 'abcd',
+   maxZoom: 18,
+   accessToken: accessToken
+ });
         // Mapbox with leaflet
         var map = L.map('map').addLayer(mapboxTiles).setView(center, 13);
 
@@ -412,19 +428,22 @@
 
       // Draw lan lot on map
       function draw_map_route(day_data) {
+        console.log(day_data['path']);
         map = window.map;
         if (window.currentPath) {
           map.removeLayer(window.currentPath);
         };
         latlng = day_data['path'];
-        var polyline = L.polyline(latlng, {color: 'red'}).addTo(map);
+        var polyline = L.polyline(latlng, {color: 'green'}).addTo(map);
         window.currentPath = polyline;
       }
 
     function draw(data) {
       //data.reverse();
-      draw_distances(data);
+      // draw_distances(data);
+      // console.log(data[0]);
       draw_base_map();
+      draw_graphs(data[0]);
     }
     // Function that capitalizes the first letter of a word
     function capitalizeFirstLetter(string) {
