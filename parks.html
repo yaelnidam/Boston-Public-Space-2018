@@ -39,7 +39,7 @@
         color: #777;
     }
       </style>
-    <title>parks</title>
+    <title>Boston's Parks</title>
 
     <!-- Bootstrap core CSS -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -94,7 +94,7 @@
           <div class="col-lg-8 col-md-10 mx-auto">
             <div class="post-heading">
               <h1>Boston Parks</h1>
-              <h2 class="subheading">Most frequently used</h2>
+              <h2 class="subheading">Most Frequently Visited</h2>
                         </div>
           </div>
         </div>
@@ -124,7 +124,7 @@
 
             function style(feature) {
               return {
-                  fillColor: '#FD8D3C',
+                  fillColor: '#47885e',
                   weight: 0.1,
                   opacity: 1,
                   color: 'white',
@@ -205,7 +205,7 @@
           info.update = function (properties) {
               this._div.innerHTML = '<h4> Selected Open Spaces </h4>' +  (properties ?
                   '<b>'  + properties.Name + '</b><br />' + 'Description: ' + properties.Des
-                  : 'Hover to see more!');
+                  : ' ');
           };
 
           info.addTo(map);
@@ -235,7 +235,7 @@
 
                 function createVisualization(){
                   var valueLabelWidth = 40; // space reserved for value labels (right)
-                  var barHeight = 30; // height of one bar
+                  var barHeight = 18; // height of one bar
                   var barLabelWidth = 280; // space reserved for bar labels
                   var barLabelPadding = 5; // padding between bar and bar labels (left)
                   var gridLabelHeight = 18; // space reserved for gridline labels
@@ -356,7 +356,7 @@
             </ul>
 
             <h2>Focusing on 7 Parks</h2>
-              <p class="lead">In a city housing hundreds of parks throughout Boston’s many neighborhoods, choosing six to analyze for climate change impacts was exceedingly difficult. Data on Boston parks is collected and maintained by the City of Boston in its Open Space dataset (https://data.boston.gov/dataset/open-space). This dataset contains 1006 distinct spaces identified as Open Space by the City of Boston.
+              <p class="lead">In a city housing hundreds of parks throughout Boston’s many neighborhoods, choosing a set of parks to analyze for climate change impacts was exceedingly difficult. Data on Boston parks is collected and maintained by the City of Boston in its Open Space dataset (https://data.boston.gov/dataset/open-space). This dataset contains 1,006 distinct spaces identified as Open Space by the City of Boston.
                 </p>
               <p class="lead">Some parks in Boston are represented in this dataset by more than one record – especially if the single open space unit is separated or bisected by roadways.  As such, the data entries in the spreadsheet with the following Open Space IDs were combined in GIS to get the final JSON shapes for the public spaces identified in BOLD above. All other parks above are identified by a single Open Space ID in the Open Space dataset or were not included in our final analysis. These six distinct parks cover the breadth of central Boston.s
                 </p>
@@ -367,24 +367,18 @@
                     <li>Castle Island: 387, 388</li>
                     <li>Long Wharf and Aquarium: 798, 799, 899, 900</li>
                       </ul>
-                  <p class="lead">When determining which six parks to examine the heat island and sea rise/flooding impacts, we followed two rules: 1) Parks must be publicly owned and accessible; and, 2) There must be some variation in park size (small to large), shape (linear to square) and type (waterfront, biking/walking, gathering space, transit corridor).
+                  <p class="lead">When determining which parks to examine the heat island and sea rise/flooding impacts, we followed two rules: 1) Parks must be publicly owned and accessible; and, 2) There must be some variation in park size (small to large), shape (linear to square) and type (waterfront, biking/walking, gathering space, transit corridor).
                     </p>
                   <p class="lead">As the crown jewel and most prominent of public parks in Boston due to its central position on the Freedom Trail, the Boston Common & Public Garden is technically two separate parks. The Boston Common is the oldest public park in the United States, founded in 1634, and is 50 acres in size. The Boston Public Garden, founded in 1837, is separated from the Common by Charles Street and is 24 acres in size.
                     </p>
-                  <p class="lead">The RFK Greenway is a relatively new park as it was developed following the relocation of the highway under the Boston during the Big Dig. It was completed in 2008 and the Rose Fitzgerald Kennedy Greenway Conservancy maintains its 17 acres. Its shape follows the contours of the underground highway from North End to Chinatown and South Station.
+                  <p class="lead">The RFK Greenway is a relatively new park as it was developed following the relocation of the highway under Boston during the Big Dig. It was completed in 2008 and the Rose Fitzgerald Kennedy Greenway Conservancy maintains its 17 acres. Its shape follows the contours of the underground highway from the North End to Chinatown and South Station.
                     </p>
-                  <p class="lead">As we are interested in the impacts of climate change on public spaces and public transit, we decided to focus on the Southwest Corridor Park which aligns with a major public transit system: the Orange Line MBTA track from Back Bay to Forest Hills. The Park itself is 4.1 miles long and covers 52 acres. Therefore, we excluded both Commonwealth Avenue and the Charles River Reservation even though both are linear parkways alongside major roads.
+                  <p class="lead">As we are interested in the impacts of climate change on public spaces and public transit, we decided to focus on the Southwest Corridor Park which aligns with a major public transit system: the Orange Line MBTA track from Back Bay to Forest Hills. The Park itself is 4.1 miles long and covers 52 acres. Therefore, we excluded both Commonwealth Avenue and the Charles River Reservation even though both are linear parkways alongside major roadways.
                     </p>
-                  <p class="lead">As an extremely visible landmark as visitors fly into Logan International Airport, Castle Island  & the Strandaway. Castle Island is home to the 19th Century Fort Independence and covers 22 acres on the edge of Boston Harbor.
+                  <p class="lead">Castle Island & the Strandaway are extremely visible landmarks as visitors fly into Logan International Airport. Castle Island is home to the 19th Century Fort Independence and covers 22 acres on the edge of Boston Harbor.
                     </p>
-                  <p class="lead">Alongside the RFK Greenway in Boston is the Boston Aquarium and Long Wharf, which consists of two historic wharfs and a public access harborwalk.
+                  <p class="lead">Alongside the RFK Greenway in Boston is the Boston Aquarium and Long Wharf, which consists of two historic wharfs and a public access harborwalk. Charlesgate, designed by Olmsted in the late 1800s is a connection of Emerald Necklace and Charles River.The last park included is the Back Bay Fens, designed by Olmsted in the late 1800s. It is a main feature of Boston’s Emerald Necklace system that covers over 1,000 acres.
                     </p>
-                  <p class="lead">Although a prominent landmark, Fenway Park Field is privately owned and not publicly accessible. As such it was not included in this analysis.
-                    </p>
-                    <p class="lead">Charlesgate, designed by Olmsted in the late 1800s is a connection of Emerald Necklace and Charles River.
-                      </p>
-                      <p class="lead">The last park included is the Back Bay Fens, designed by Olmsted in the late 1800s. It is a main feature of Boston’s Emerald Necklace system that covers over 1000 acres.
-                        </p>
           </div>
         </div>
       </div>
