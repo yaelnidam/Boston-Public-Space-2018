@@ -1,0 +1,253 @@
+<!DOCTYPE html "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en">
+<head>
+  <title>Mapping</title>
+  <script src="https://d3js.org/d3.v2.min.js"></script>
+  <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=9">
+  <script src="data/JSONs/OS_Full_1.json"></script>
+
+  <style>
+  .hover {
+    stroke-width: 2px;
+    opacity: 0.5;
+  }
+  .incident{
+    fill: steelblue;
+  }
+  .info {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+.info h4 {
+    margin: 0 0 5px;
+    color: #777;
+}
+  </style>
+</head>
+<body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+  <div id="map" style="width: 960px; height: 800px"></div>
+  <div id="chart"></div>
+  <script>
+  var map = L.map('map',{ center: [42.3350, -71.060], zoom: 13});
+
+  var CartoDB_Positron = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
+  	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+  	subdomains: 'abcd',
+  	maxZoom: 19
+  }).addTo(map);
+
+  function style(feature) {
+    return {
+        fillColor: '#FD8D3C',
+        weight: 0.1,
+        opacity: 1,
+        color: 'white',
+        dashArray: '3',
+        fillOpacity: 0.7
+    };
+}
+     L.geoJson(neighborhoods_json, {style: style}).addTo(map);
+
+  function highlightFeature(e) {
+      var layer = e.target;
+
+      layer.setStyle({
+          weight: 5,
+          color: '#666',
+          dashArray: '',
+          fillOpacity: 0.7
+      });
+
+      if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+          layer.bringToFront();
+      }
+
+      info.update(layer.feature.properties);
+
+      link_over(layer,layer.feature.properties) ;
+
+    }
+
+
+  function resetHighlight(e) {
+    geojson.resetStyle(e.target);
+    info.update();
+    link_out(e.target,e.target.feature.properties);
+}
+  var geojson;
+
+  function zoomToFeature(e) {
+      map.fitBounds(e.target.getBounds());
+  }
+
+  function link_over(targ,prop){
+      //targ.attr("class", function (d) { return prop.Name1 ;})
+      targ.on("mouseover", function(d) {
+          d3.selectAll("." + prop.Name1).classed("hover",true);})
+
+        console.log(prop.Name1);
+  }
+
+  function link_out(targ,prop){
+
+      targ.on("mouseout", function(d) {
+      d3.selectAll("." + prop.Name1).classed("hover", false);
+        });
+  }
+function onEachFeature(feature, layer) {
+    layer.on({
+        mouseover: highlightFeature,
+        mouseout: resetHighlight,
+        click: zoomToFeature
+    });
+}
+
+geojson = L.geoJson(neighborhoods_json, {
+    style: style,
+    onEachFeature: onEachFeature
+}).addTo(map);
+
+var info = L.control();
+
+info.onAdd = function (map) {
+    this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+    this.update();
+    return this._div;
+};
+
+// method that we will use to update the control based on feature properties passed
+info.update = function (properties) {
+    this._div.innerHTML = '<h4> Selected Open Spaces </h4>' +  (properties ?
+        '<b>'  + properties.Name + '</b><br />' + 'Description: ' + properties.Des
+        : 'Hover to see more!');
+};
+
+info.addTo(map);
+
+
+      // Bar Chart code will go here.
+      var pingData = [];
+      var name_array = [];
+
+      d3.csv("data/all_parks_counts_top15.csv", function(d) {
+        var name = d.SITE_NAME.split("& ").join("")
+        var name = name.split(" ").join("_")
+        name_array.push(name);
+        return {
+          site : name,
+          display: d.SITE_NAME,
+          pings : +d.PING_CT
+        };
+        console.log(site);
+      }, function(error, rows) {
+        pingData = rows;
+
+        createVisualization();
+        console.log(name_array);
+      });
+
+
+      function createVisualization(){
+        var valueLabelWidth = 40; // space reserved for value labels (right)
+        var barHeight = 30; // height of one bar
+        var barLabelWidth = 280; // space reserved for bar labels
+        var barLabelPadding = 5; // padding between bar and bar labels (left)
+        var gridLabelHeight = 18; // space reserved for gridline labels
+        var gridChartOffset = 3; // space between start of grid and first bar
+        var maxBarWidth = 660; // width of the bar with the max value
+
+        // scales
+        var yScale = d3.scale.ordinal().domain(d3.range(0, pingData.length)).rangeBands([0, pingData.length * barHeight]);
+        console.log(yScale);
+        var y = function(d, i) { return yScale(i); };
+        var yText = function(d, i) { return y(d, i) + yScale.rangeBand() / 2; };
+        var x = d3.scale.linear().domain([0, d3.max(pingData, function(d) { return +d.pings;})]).range([0, maxBarWidth]);
+        // svg container element
+        var chart = d3.select('#chart').append("svg")
+          .attr('width', maxBarWidth + barLabelWidth + valueLabelWidth)
+          .attr('height', gridLabelHeight + gridChartOffset + pingData.length * barHeight);
+
+        // grid line labels
+        var gridContainer = chart.append('g')
+          .attr('transform', 'translate(' + barLabelWidth + ',' + gridLabelHeight + ')');
+        gridContainer.selectAll("text").data(x.ticks(10)).enter().append("text")
+          .attr("x", x)
+          .attr("dy", -3)
+          .attr("text-anchor", "middle")
+          .text(String);
+          // vertical grid lines
+        gridContainer.selectAll("line").data(x.ticks(10)).enter().append("line")
+          .attr("x1", x)
+          .attr("x2", x)
+          .attr("y1", 0)
+          .attr("y2", yScale.rangeExtent()[1] + gridChartOffset)
+          .style("stroke", "#ccc");
+
+          // bar labels
+          var labelsContainer = chart.append('g')
+            .attr('transform', 'translate(' + (barLabelWidth - barLabelPadding) + ',' + (gridLabelHeight + gridChartOffset) + ')');
+          labelsContainer.selectAll('text').data(pingData).enter().append('text')
+            .attr('y', yText)
+            .attr('stroke', 'none')
+            .attr('fill', 'black')
+            .attr("dy", ".35em") // vertical-align: middle
+            .attr('text-anchor', 'end')
+            .text(function(d) { return d.display; });
+         // bars
+          var barsContainer = chart
+            .append('g')
+            .attr('transform', 'translate(' + barLabelWidth + ',' + (gridLabelHeight + gridChartOffset) + ')');
+
+        //Create SVG element
+
+          barsContainer.selectAll("rect").data(pingData).enter().append("rect")
+            .attr('y', y)
+            .attr('height', yScale.rangeBand())
+            .attr('width', function(d) { return x(d.pings); })
+            .attr("class", function (d) { return d.site ;})
+            .on("mouseover", function(d) {
+            //    return tooltip.style("visibility", "visible").text(d.site + ": " + d.pings + " Pings");
+            d3.select(this).classed("hover",true);
+            d3.selectAll("." + d.site).classed("hover",true);
+            console.log(d.site);
+        //  return tooltip.style("visibility", "visible").text(d.site + ": " + d.pings + " Pings");
+            })
+            .on("mouseout", function(d) {
+            d3.select(this).classed("hover",false);
+            d3.selectAll("." + d.site).classed("hover", false);
+          //  return tooltip.style("visibility", "hidden");
+            })
+            .attr('stroke', 'white')
+            .attr('fill', 'gray');
+
+          // bar value labels
+          barsContainer.selectAll("text").data(pingData).enter().append("text")
+            .attr("x", function(d) { return x(d.pings); })
+            .attr("y", yText)
+            .attr("dx", 3) // padding-left
+            .attr("dy", ".35em") // vertical-align: middle
+            .attr("text-anchor", "start") // text-align: right
+            .attr("fill", "black")
+            .attr("stroke", "none")
+            .text(function(d) { return d3.round(d.pings, 2); });
+
+          // start line
+          barsContainer.append("line")
+            .attr("y1", -gridChartOffset)
+            .attr("y2", yScale.rangeExtent()[1] + gridChartOffset)
+            .style("stroke", "#000");
+
+}
+ </script>
+</body>
+ </html>

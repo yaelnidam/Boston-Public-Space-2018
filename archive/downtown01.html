@@ -7,6 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
+    <!-- <link rel="stylesheet" type="text/css" href="downtown/interactive_map.css"> <!-- This is the css for the interactive map --> -->
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="downtown/interactive_map.js"></script> <!-- This is the js for the interactive map -->
 
     <title>parks</title>
 
@@ -71,14 +77,34 @@
     </header>
 
     <!-- Post Content -->
+    <article>
+      <!-- <div class="container">
+        <div class="row"> -->
+          <!-- <div class="col-lg-8 col-md-10 mx-auto"> -->
+
+              <svg id='bar'></svg>
+              <div id='map'></div>
+              <div id='graphs'></div>
+
+              <script>
+                // load interactive map data
+                document.addEventListener('DOMContentLoaded', function() {
+                  d3.json("downtown/tmp_trim.json", draw);
+                });
+              </script>
+                <!-- </div> -->
+          <!-- </div> -->
+        <!-- </div>
+      </div> -->
+    </article>
+
+
   <article>
     <div class="container">
       <div class="row">
-        <!-- <div class="col-lg-8 col-md-10 mx-auto"> -->
-        <OBJECT data="downtown/downtown2.html" width="2000" height="650">
-        Warning: file_to_include.html could not be included.
-        </OBJECT>
-        <!-- </div> -->
+        <div class="col-lg-8 col-md-10 mx-auto">
+
+        </div>
       </div>
     </div>
 </article>

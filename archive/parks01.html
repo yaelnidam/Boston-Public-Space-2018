@@ -108,8 +108,120 @@
           <div class="col-lg-8 col-md-10 mx-auto">
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
             <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
-            <div id="chart" ></div>
-            <div id="map" style="width: 720px; height: 560px"></div>
+
+
+            <div class = "mapchart" id="chart"></div>
+            <div class = "mapchart" id="map" style="width: 780px; height: 580px"></div>
+            <script>
+                    // Bar Chart code will go here.
+                    var pingData = [];
+
+                    d3.csv("data/all_parks_counts_top15.csv", function(d) {
+                      var name = d.SITE_NAME.split("& ").join("")
+                      var name = name.split(" ").join("_")
+
+                      return {
+                        site : name,
+                        pings : +d.PING_CT
+                      };
+                      console.log(site);
+                    }, function(error, rows) {
+                      pingData = rows;
+
+                      createVisualization();
+                    });
+
+                    function createVisualization(){
+                      // Width and height of SVG
+                      var w = 600;
+                      var h = 455;
+
+                      // Get length of Array and set length so we can an input dataset of variable length
+                      var arrayLength = pingData.length; // length of dataset
+                      var maxValue = d3.max(pingData, function(d) { return +d.pings;} ); // get maximum value of our dataset
+                      var x_axisLength = 400; // length of x-axis in our layout
+                      var y_axisLength = 400; // length of y-axis in our layout
+
+                      // Use a scale for the height of the visualization
+                      var yScale = d3.scale.linear()
+                          .domain([0, maxValue])
+                          .range([0, y_axisLength]);
+
+                      //Create SVG element
+                      var svg = d3.select("#chart")
+                        .append("svg")
+                        .attr("width", w)
+                        .attr("height", h);
+
+
+                      // Select and generate rectangle elements
+                      svg.selectAll( "rect" )
+                        .data( pingData )
+                        .enter()
+                        .append("rect")
+                        .attr( "x", function(d,i){
+                          return i * (x_axisLength/arrayLength) + 30; // Set x coordinate of rectangle to index of data value (i) *25
+                        })
+                        .attr( "y", function(d){
+                          return h - yScale(d.pings) - 35; // Set y coordinate of rect using the y scale
+                        })
+                        .attr( "width", (x_axisLength/arrayLength) - 1)
+                        .attr( "height", function(d){
+                          return yScale(d.pings); // Set height of using the scale
+                        })
+                        .attr( "fill", "gray")
+                        .attr("class", function (d) { return d.site ;})
+                        .on("mouseover", function(d) {
+                        d3.selectAll("." + d.site).classed("hover",true);
+                        console.log(d.site);
+                        return tooltip.style("visibility", "visible").text(d.site + ": " + d.pings + " Pings");
+                        })
+                      //  .on("mousemove", function(d){
+                      //     return tooltip.styles("top", (event.pageY- 30)+"px").style("left",(event.pageX+5)+"px").text(d.site + ": " + d.pings+ " Pings");})
+                        .on("mouseout", function(d) {
+                      //  d3.select(this).classed("hover",false);
+                         d3.selectAll("." + d.site).classed("hover", false);
+                         return tooltip.style("visibility", "hidden");
+                        });
+
+                    // Create y-axis
+                      svg.append("line")
+                        .attr("x1", 30)
+                        .attr("y1", 0)
+                        .attr("x2", 30)
+                        .attr("y2", 420)
+                        .attr("stroke-width", 2)
+                        .attr("stroke", "black");
+
+                      // Create x-axis
+                      svg.append("line")
+                        .attr("x1", 30)
+                        .attr("y1", 420)
+                        .attr("x2", 440)
+                        .attr("y2", 420)
+                        .attr("stroke-width", 2)
+                        .attr("stroke", "black");
+
+                      // y-axis label
+                      svg.append("text")
+                        .attr("class", "y label")
+                        .attr("text-anchor", "end")
+                        .text("No. of Pings")
+                        .attr("transform", "translate(20, 20) rotate(-90)")
+                        .attr("font-size", "14px")
+                        .attr("font-family", "'Open Sans', sans-serif");
+
+                      // Create Tooltip and set it to be hidden
+                      var tooltip = d3.select("#chart")
+                        .append("div")
+                        //.style("position", "absolute")
+                        .style("font-family", "'Open Sans', sans-serif")
+                        .style("font-size", "14px")
+                        .style("z-index", "10")
+                        .style("visibility", "hidden");
+              }
+              </script>
+
 
             <script>
             var map = L.map('map',{ center: [42.3350, -71.060], zoom: 13});
@@ -152,7 +264,6 @@
 
               }
 
-
             function resetHighlight(e) {
               geojson.resetStyle(e.target);
               info.update();
@@ -165,7 +276,8 @@
             }
 
             function link_over(targ,prop){
-                //targ.attr("class", function (d) { return prop.Name1 ;})
+
+                   //This part adds the class "hover" to the state and its matching rectangle in the chart
                 targ.on("mouseover", function(d) {
                     d3.selectAll("." + prop.Name1).classed("hover",true);})
 
@@ -201,134 +313,18 @@
 
           // method that we will use to update the control based on feature properties passed
           info.update = function (properties) {
-              this._div.innerHTML = '<h4> Selected Open Spaces </h4>' +  (properties ?
+              this._div.innerHTML = '<h4> The Open Spaces We Choose </h4>' +  (properties ?
                   '<b>'  + properties.Name + '</b><br />' + 'Description: ' + properties.Des
-                  : 'Hover to see more!');
+                  : 'Hover over a park');
           };
 
           info.addTo(map);
-
-
-                // Bar Chart code will go here.
-                var pingData = [];
-                var name_array = [];
-
-                d3.csv("data/all_parks_counts_top15.csv", function(d) {
-                  var name = d.SITE_NAME.split("& ").join("")
-                  var name = name.split(" ").join("_")
-                  name_array.push(name);
-                  return {
-                    site : name,
-                    display: d.SITE_NAME,
-                    pings : +d.PING_CT
-                  };
-                  console.log(site);
-                }, function(error, rows) {
-                  pingData = rows;
-
-                  createVisualization();
-                  console.log(name_array);
-                });
-
-
-                function createVisualization(){
-                  var valueLabelWidth = 40; // space reserved for value labels (right)
-                  var barHeight = 30; // height of one bar
-                  var barLabelWidth = 280; // space reserved for bar labels
-                  var barLabelPadding = 5; // padding between bar and bar labels (left)
-                  var gridLabelHeight = 18; // space reserved for gridline labels
-                  var gridChartOffset = 3; // space between start of grid and first bar
-                  var maxBarWidth = 400; // width of the bar with the max value
-
-                  // scales
-                  var yScale = d3.scale.ordinal().domain(d3.range(0, pingData.length)).rangeBands([0, pingData.length * barHeight]);
-                  console.log(yScale);
-                  var y = function(d, i) { return yScale(i); };
-                  var yText = function(d, i) { return y(d, i) + yScale.rangeBand() / 2; };
-                  var x = d3.scale.linear().domain([0, d3.max(pingData, function(d) { return +d.pings;})]).range([0, maxBarWidth]);
-                  // svg container element
-                  var chart = d3.select('#chart').append("svg")
-                    .attr('width', maxBarWidth + barLabelWidth + valueLabelWidth)
-                    .attr('height', gridLabelHeight + gridChartOffset + pingData.length * barHeight);
-
-                  // grid line labels
-                  var gridContainer = chart.append('g')
-                    .attr('transform', 'translate(' + barLabelWidth + ',' + gridLabelHeight + ')');
-                  gridContainer.selectAll("text").data(x.ticks(10)).enter().append("text")
-                    .attr("x", x)
-                    .attr("dy", -3)
-                    .attr("text-anchor", "middle")
-                    .text(String);
-                    // vertical grid lines
-                  gridContainer.selectAll("line").data(x.ticks(10)).enter().append("line")
-                    .attr("x1", x)
-                    .attr("x2", x)
-                    .attr("y1", 0)
-                    .attr("y2", yScale.rangeExtent()[1] + gridChartOffset)
-                    .style("stroke", "#ccc");
-
-                    // bar labels
-                    var labelsContainer = chart.append('g')
-                      .attr('transform', 'translate(' + (barLabelWidth - barLabelPadding) + ',' + (gridLabelHeight + gridChartOffset) + ')');
-                    labelsContainer.selectAll('text').data(pingData).enter().append('text')
-                      .attr('y', yText)
-                      .attr('stroke', 'none')
-                      .attr('fill', 'black')
-                      .attr("dy", ".35em") // vertical-align: middle
-                      .attr('text-anchor', 'end')
-                      .text(function(d) { return d.display; });
-                   // bars
-                    var barsContainer = chart
-                      .append('g')
-                      .attr('transform', 'translate(' + barLabelWidth + ',' + (gridLabelHeight + gridChartOffset) + ')');
-
-                  //Create SVG element
-
-                    barsContainer.selectAll("rect").data(pingData).enter().append("rect")
-                      .attr('y', y)
-                      .attr('height', yScale.rangeBand())
-                      .attr('width', function(d) { return x(d.pings); })
-                      .attr("class", function (d) { return d.site ;})
-                      .on("mouseover", function(d) {
-                      //    return tooltip.style("visibility", "visible").text(d.site + ": " + d.pings + " Pings");
-                      d3.select(this).classed("hover",true);
-                      d3.selectAll("." + d.site).classed("hover",true);
-                      console.log(d.site);
-                  //  return tooltip.style("visibility", "visible").text(d.site + ": " + d.pings + " Pings");
-                      })
-                      .on("mouseout", function(d) {
-                      d3.select(this).classed("hover",false);
-                      d3.selectAll("." + d.site).classed("hover", false);
-                    //  return tooltip.style("visibility", "hidden");
-                      })
-                      .attr('stroke', 'white')
-                      .attr('fill', 'gray');
-
-                    // bar value labels
-                    barsContainer.selectAll("text").data(pingData).enter().append("text")
-                      .attr("x", function(d) { return x(d.pings); })
-                      .attr("y", yText)
-                      .attr("dx", 3) // padding-left
-                      .attr("dy", ".35em") // vertical-align: middle
-                      .attr("text-anchor", "start") // text-align: right
-                      .attr("fill", "black")
-                      .attr("stroke", "none")
-                      .text(function(d) { return d3.round(d.pings, 2); });
-
-                    // start line
-                    barsContainer.append("line")
-                      .attr("y1", -gridChartOffset)
-                      .attr("y2", yScale.rangeExtent()[1] + gridChartOffset)
-                      .style("stroke", "#000");
-
-          }
-           </script>
+          </script>
         </div>
       </div>
     </div>
 </article>
-<br>
-<br>
+
 <article>
   <div class="container">
     <div class="row">
