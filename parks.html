@@ -102,15 +102,17 @@
     </header>
 
     <!-- Post Content -->
+    <header class="masthead" id="map" style="height:560px">
+    </header>
+
     <article>
       <div class="container">
         <div class="row">
           <div class="col-lg-8 col-md-10 mx-auto">
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
             <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
-            <div id="chart" ></div>
-            <div id="map" style="width: 720px; height: 560px"></div>
 
+            <div id="chart" ></div>
             <script>
             var map = L.map('map',{ center: [42.3350, -71.060], zoom: 13});
 
