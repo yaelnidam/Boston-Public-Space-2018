@@ -1,7 +1,9 @@
 body {
+
     height: 600px;
     width: 1200px;
-    background-color: #eeeeee;
+    background-color: 'white';
+
   }
    #map {
        width:50%;
@@ -10,7 +12,7 @@ body {
      }
    #bar {
      width: 50%;
-     height: 150px;
+     height: 0px;
      float: left;
    }
 
@@ -18,11 +20,11 @@ body {
 /* New Staff*/
    #graphs {
      width: 50%;
-     height: 450px;
+     height: 100%;
      float: left;
    }
    .area {
-     //fill: #e7e7e7;
+     fill: "white";
      fill: transparent;
    }
 
@@ -55,12 +57,14 @@ body {
    }
    .axis {
      font: 10px sans-serif;
+      
    }
    .axis path,
    .axis line {
      fill: none;
      stroke: #000;
      shape-rendering: crispEdges;
+
    }
    path.leaflet-clickable {
      stroke-opacity: 1;
