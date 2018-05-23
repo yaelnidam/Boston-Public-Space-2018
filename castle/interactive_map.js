@@ -99,7 +99,7 @@
       var bisect = d3.bisector(function(d){ return d.distance; }).left; // NEW STAFF
 
       // variable to hold our yscales
-      var yarray = ['temperature','stormwater','elevation'];
+      var yarray = ['temperature','Flood Water Depth','elevation'];
 
       // Intitialize new nested dataset
       var new_data_nest = [];
@@ -132,7 +132,7 @@
               //console.log(new_data_nest[ix].values[i])
           }
         }
-        else if (new_data_nest[ix].key=='stormwater'){
+        else if (new_data_nest[ix].key=='Flood Water Depth'){
           for ( var i=0; i<new_data_nest[0].values.length; i++) {
               new_data_nest[ix].values[i]['si'] = 'ft'
 

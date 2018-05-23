@@ -99,7 +99,7 @@
       var bisect = d3.bisector(function(d){ return d.distance; }).left; // NEW STAFF
 
       // variable to hold our yscales
-      var yarray = ['temperature','stormwater','elevation'];
+      var yarray = ['temperature','Flood Water Depth','elevation'];
 
       // Intitialize new nested dataset
       var new_data_nest = [];
@@ -132,7 +132,7 @@
               //console.log(new_data_nest[ix].values[i])
           }
         }
-        else if (new_data_nest[ix].key=='stormwater'){
+        else if (new_data_nest[ix].key=='Flood Water Depth'){
           for ( var i=0; i<new_data_nest[0].values.length; i++) {
               new_data_nest[ix].values[i]['si'] = 'ft'
 
@@ -400,7 +400,7 @@
       } // End draw elevation
       function draw_base_map() {
         // The center must be updated whenever I put a new coordinate on the map
-        var center = [	42.3431617	,	-71.0931516	]  //[53.01,25.73]->Eastern Europe,  [37.77, -122.45]->California
+        var center = [	42.3431617	,	-71.085	]  //[53.01,25.73]->Eastern Europe,  [37.77, -122.45]->California
 
         // The token is for access to the mapbox API
         var accessToken = 'pk.eyJ1Ijoib2lrb25hbmciLCJhIjoiY2ozM2RjcjIyMDBjODJ3bzh3bnRyOHBxMyJ9.nQH16WG-DcBB_TQEEJiuCA';
@@ -420,7 +420,7 @@
    accessToken: accessToken
  });
         // Mapbox with leaflet
-        var map = L.map('map').addLayer(mapboxTiles).setView(center, 15);
+        var map = L.map('map').addLayer(mapboxTiles).setView(center, 14);
 
         // Initialize map
         window.map = map

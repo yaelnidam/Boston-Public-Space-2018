@@ -132,7 +132,6 @@
                   fillOpacity: 0.7
               };
           }
-               L.geoJson(neighborhoods_json, {style: style}).addTo(map);
 
             function highlightFeature(e) {
                 var layer = e.target;
@@ -171,7 +170,6 @@
                 targ.on("mouseover", function(d) {
                     d3.selectAll("." + prop.Name1).classed("hover",true);})
 
-                  console.log(prop.Name1);
             }
 
             function link_out(targ,prop){
@@ -187,13 +185,54 @@
                   click: zoomToFeature
               });
           }
+          var controlLayers = L.control.layers().addTo(map);
 
+          var srl = 'data/JSONs/36inch_Sea_Level_Rise_10pct_Annual_Flood.geojson';
+          var heat = 'data/JSONs/heatopo_poly3.geojson';
+
+          $.getJSON(srl, function (geojson) {
+          	var geojsonLayer = L.geoJson(geojson, {
+          		style: function (feature) {
+          			return {
+          				'weight': 0,
+          				'fillColor': 'lightblue',
+          				'fillOpacity': 1
+          			}
+          		}
+          	});
+          	controlLayers.addOverlay(geojsonLayer, 'SLR 36inches');
+          });
+
+          function getColor(d) {
+            return d >= 32 ? '#a50f15' : // Means: if (d >= 1966) return 'green' else…
+          	d >= 28 ? '#de2d26' : // if (d >= 1960) return 'black' else etc…
+           d >= 25 ? '#fb6a4a' :
+           d >= 20 ? '#fcae91' :
+           '#fee5d9';
+          }
+
+          $.getJSON(heat, function (geojson) {
+          	var geojsonLayer = L.geoJson(geojson, {
+          		style: function (feature) {
+          	//		console.log(feature.properties.avg_contou);
+          			return {
+          				'weight': 0.2,
+          				'color': getColor(feature.properties.avg_contou), // you can call the getColor function
+          				'fillColor': getColor(feature.properties.avg_contou),
+          				'fillOpacity': 0.4
+          			}
+          		}
+          	});
+          	controlLayers.addOverlay(geojsonLayer, 'Heat Island');
+          });
           geojson = L.geoJson(neighborhoods_json, {
               style: style,
               onEachFeature: onEachFeature
           }).addTo(map);
+          controlLayers.addOverlay(geojson, 'parks');
 
-          var info = L.control();
+
+          var info = L.control({position: 'bottomright'});
 
           info.onAdd = function (map) {
               this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
@@ -203,13 +242,27 @@
 
           // method that we will use to update the control based on feature properties passed
           info.update = function (properties) {
-              this._div.innerHTML = '<h4> Selected Open Spaces </h4>' +  (properties ?
-                  '<b>'  + properties.Name + '</b><br />' + 'Description: ' + properties.Des
-                  : ' ');
+              this._div.innerHTML = (properties ?
+                  '<b>'  + properties.Name + '</b><br />' + properties.Des
+                  : 'Hover to see more!');
           };
 
           info.addTo(map);
+ /*
+          var popup = L.popup({
+                    closeButton: false,
+                    position:'topleft',
+                    autoClose: false
+                  })
+                 .setLatLng(  [	42.3195261	,	-71.1021852	]	)
+                 .setContent('<p>Text box on a map</p>')
+                  .addTo(map);
+*/
 
+        </script>
+        <p class="lead">Layer Sources: 36inch Sea Level Rise 10pct Annual Flood, LANDSET, City of Boston, Skyhook
+
+        <script>
 
                 // Bar Chart code will go here.
                 var pingData = [];
@@ -224,12 +277,12 @@
                     display: d.SITE_NAME,
                     pings : +d.PING_CT
                   };
-                  console.log(site);
+
                 }, function(error, rows) {
                   pingData = rows;
 
                   createVisualization();
-                  console.log(name_array);
+
                 });
 
 
@@ -247,7 +300,7 @@
 
                   // scales
                   var yScale = d3.scale.ordinal().domain(d3.range(0, pingData.length)).rangeBands([0, pingData.length * barHeight]);
-                  console.log(yScale);
+
                   var y = function(d, i) { return yScale(i); };
                   var yText = function(d, i) { return y(d, i) + yScale.rangeBand() / 2; };
                   var x = d3.scale.linear().domain([0, d3.max(pingData, function(d) { return +d.pings;})]).range([0, maxBarWidth]);
@@ -300,7 +353,7 @@
                       //    return tooltip.style("visibility", "visible").text(d.site + ": " + d.pings + " Pings");
                       d3.select(this).classed("hover",true);
                       d3.selectAll("." + d.site).classed("hover",true);
-                      console.log(d.site);
+
                   //  return tooltip.style("visibility", "visible").text(d.site + ": " + d.pings + " Pings");
                       })
                       .on("mouseout", function(d) {
