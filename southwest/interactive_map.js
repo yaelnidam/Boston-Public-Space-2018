@@ -424,7 +424,48 @@
         var map = L.map('map').addLayer(mapboxTiles).setView(center, 13);
 
         // Initialize map
-        window.map = map
+        window.map = map;
+        var controlLayers = L.control.layers().addTo(map);
+
+var srl = '36inch_Sea_Level_Rise_10pct_Annual_Flood.geojson';
+var heat = 'heatopo_poly3.geojson';
+
+$.getJSON(srl, function (geojson) {
+  var geojsonLayer = L.geoJson(geojson, {
+    style: function (feature) {
+      return {
+        'weight': 0,
+        'color':'lightblue',
+        'fillColor': 'lightblue',
+        'fillOpacity': 0.8
+      }
+    }
+  });
+  controlLayers.addOverlay(geojsonLayer, '2070 SLR 36inches');
+});
+
+function getColor(d) {
+  return d >= 33 ? '#a50f15' : // Means: if (d >= 1966) return 'green' else…
+  d >= 28 ? '#de2d26' : // if (d >= 1960) return 'black' else etc…
+ d >= 22 ? '#fb6a4a' :
+ d >= 17 ? '#fcae91' : // Note that numbers must be in descending order
+ '#fee5d9';
+}
+
+$.getJSON(heat, function (geojson) {
+  var geojsonLayer = L.geoJson(geojson, {
+    style: function (feature) {
+      return {
+        'weight': 0.2,
+       'color': getColor(feature.properties.avg_contou), // you can call the getColor function
+       'fillColor': getColor(feature.properties.avg_contou),
+       'fillOpacity' : 0.4
+      }
+    }
+  });
+  controlLayers.addOverlay(geojsonLayer, 'Heat Island');
+});
+
       }
 
       // Draw lan lot on map
