@@ -1,0 +1,59 @@
+html {
+  text-align: center;
+  font-family: Helvetica, sans-serif;
+  font-size: 18px;
+  line-height: 32px;
+}
+
+body {
+  font-size: 18px;
+}
+
+h1{
+  font-size: 60px;
+}
+
+h2{
+  font-size: 36px;
+}
+
+h3{
+  font-size: 24px;
+}
+
+p {
+  text-align: center;
+  font-size: 18px;
+}
+
+.body_text {
+  text-align: center;
+  font-size: 18px;
+  padding: 20px;
+  width: 1200px;
+  height: 40px;
+  margin-left: 50px
+}
+
+#special {
+  background: #ff000;
+  /*#ff0000 red-green-blue, in this case ff-full red. can also do rgb(255,0,0)*/
+}
+
+#foo {
+	color: #ff0000;
+}
+
+#bar {
+	color: white;
+	background-color: red;
+}
+
+
+a:hover{
+  color: orange;
+}
+
+.my_paragraphs {
+	background-color: #1d1230;
+}

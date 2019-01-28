@@ -1,0 +1,17 @@
+body {
+  text-align: centre;
+}
+
+p {
+  font-size: 18px;
+}
+
+.body_text {
+  font-size: 18px;
+}
+
+#special {
+  background: #ff000;
+  /*#ff0000 red-green-blue, in this case ff-full red. can also do rgb(255,0,0)*/
+}
+a:hover
